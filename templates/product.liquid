@@ -1,0 +1,32 @@
+<div class="wrap" style="max-width:1040px;margin:0 auto;padding:40px 20px">
+  <div class="vp-grid" style="display:grid;grid-template-columns:1fr 1fr;gap:40px;align-items:start">
+    <div>
+      {% if product.featured_image %}
+        <img src="{{ product.featured_image | image_url: width: 900 }}" alt="{{ product.title | escape }}" style="width:100%;border-radius:18px;border:1px solid #ECDED9">
+      {% endif %}
+    </div>
+    <div>
+      <h1 style="font-family:'Fraunces',serif;color:#40162C;font-size:34px;margin:0 0 8px">{{ product.title }}</h1>
+      <p style="font-size:22px;font-weight:800;color:#B6425B;margin:0 0 16px">{{ product.selected_or_first_available_variant.price | money }}</p>
+      <div class="rte" style="color:#36232D;line-height:1.7;margin-bottom:22px">{{ product.description }}</div>
+      {% form 'product', product %}
+        {% unless product.has_only_default_variant %}
+          <select name="id" style="width:100%;padding:13px 16px;border:1px solid #ECDED9;border-radius:12px;margin-bottom:14px">
+            {% for variant in product.variants %}
+              <option value="{{ variant.id }}" {% unless variant.available %}disabled{% endunless %}>
+                {{ variant.title }}{% unless variant.available %} — sold out{% endunless %} · {{ variant.price | money }}
+              </option>
+            {% endfor %}
+          </select>
+        {% else %}
+          <input type="hidden" name="id" value="{{ product.selected_or_first_available_variant.id }}">
+        {% endunless %}
+        <button type="submit" class="btn btn-lg" style="width:100%" {% unless product.available %}disabled{% endunless %}>
+          {% if product.available %}Add to cart{% else %}Sold out{% endif %}
+        </button>
+      {% endform %}
+      <p style="margin-top:18px"><a href="{{ routes.root_url }}" style="color:#B6425B;font-weight:600">← See the full Vallore page</a></p>
+    </div>
+  </div>
+</div>
+<style>@media(max-width:760px){.vp-grid{grid-template-columns:1fr!important}}</style>
